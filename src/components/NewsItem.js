@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import defaultImage from "../images/defaultImage1.png";
 import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const NewsItem = (props) => {
+const NewsItem = ({ category, apiKey, setProgress }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,30 +11,24 @@ const NewsItem = (props) => {
   const [totalResults, setTotalResults] = useState(0);
   const articlesPerPage = 6;
 
-  document.title = `BreakingBaat - ${
-    props.category.charAt(0).toUpperCase() + props.category.slice(1)
-  }`;
+  document.title = `BreakingBaat - ${category.charAt(0).toUpperCase() + category.slice(1)}`;
 
-  useEffect(() => {
-    fetchArticles();
-  }, [props.category,props.apiKey]);
-
-  const fetchArticles = async (page = 1) => {
+  const fetchArticles = useCallback(async (page = 1) => {
     try {
-      props.setProgress(10);
+      setProgress(10);
       const res = await fetch(
-        `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&page=${page}&pageSize=${articlesPerPage}&apiKey=${props.apiKey}`
+        `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&pageSize=${articlesPerPage}&apiKey=${apiKey}`
       );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      props.setProgress(30);
+      setProgress(30);
       const data = await res.json();
-      props.setProgress(60);
+      setProgress(60);
       if (data && data.articles) {
         setArticles((prevArticles) => [...prevArticles, ...data.articles]);
         setTotalResults(data.totalResults);
-        props.setProgress(80);
+        setProgress(80);
       } else {
         throw new Error("Invalid data structure");
       }
@@ -44,12 +38,16 @@ const NewsItem = (props) => {
     } finally {
       setLoading(false);
     }
-    props.setProgress(100);
-  };
+    setProgress(100);
+  }, [category, apiKey, setProgress]);
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   const fetchMoreData = () => {
     if (articles.length < totalResults) {
-      setPage(page + 1);
+      setPage((prevPage) => prevPage + 1);
       fetchArticles(page + 1);
     }
   };
@@ -94,14 +92,14 @@ const NewsItem = (props) => {
             </p>
           }
         >
-          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2  w-[90%] mx-auto lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 w-[90%] mx-auto lg:grid-cols-3">
             {articles.map((article, index) => (
               <div
                 key={index}
-                className="card w-full bg-base-100 shadow-xl mb-4 "
+                className="card w-full bg-base-100 shadow-xl mb-4"
               >
-                <span className=" absolute flex justify-end w-full  ">
-                  <p className="  bg-red-700 text-white font-semibold text-base px-1 rounded-bl-xl">
+                <span className="absolute flex justify-end w-full">
+                  <p className="bg-red-700 text-white font-semibold text-base px-1 rounded-bl-xl">
                     {article.source.name}
                   </p>
                 </span>
@@ -123,7 +121,7 @@ const NewsItem = (props) => {
                     {article.author === null ? "" : `By ${article.author} `}
                     {new Date(article.publishedAt).toGMTString()}{" "}
                   </p>
-                  <div className="card-actions  justify-start">
+                  <div className="card-actions justify-start">
                     <Link
                       to={article.url}
                       className="p-1 bg-primary text-black rounded-xl"
