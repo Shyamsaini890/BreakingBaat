@@ -121,7 +121,7 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
                     {article.description}
                   </p>
                   <p>
-                    {article.author === null ? "" : `By ${article.author} `}
+                    {/* {article.author === null ? "" : `By ${article.author} `} */}
                     {new Date(article.publishedAt).toGMTString()}{" "}
                   </p>
                   <div className="card-actions justify-start">
