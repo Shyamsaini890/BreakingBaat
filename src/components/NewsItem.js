@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import defaultImage from "../images/defaultImage1.png";
 import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -11,9 +11,7 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
   const [totalResults, setTotalResults] = useState(0);
   const articlesPerPage = 6;
 
-  document.title = `BreakingBaat - ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-
-  const fetchArticles = useCallback(async (page = 1) => {
+  const fetchArticles = async (page = 1) => {
     try {
       setProgress(10);
       const res = await fetch(
@@ -29,6 +27,9 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
         setArticles((prevArticles) => [...prevArticles, ...data.articles]);
         setTotalResults(data.totalResults);
         setProgress(80);
+        document.title = `BreakingBaat - ${
+          category.charAt(0).toUpperCase() + category.slice(1)
+        }`;
       } else {
         throw new Error("Invalid data structure");
       }
@@ -39,11 +40,11 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
       setLoading(false);
     }
     setProgress(100);
-  }, [category, apiKey, setProgress]);
+  };
 
   useEffect(() => {
     fetchArticles();
-  }, [fetchArticles]);
+  }, [category]);
 
   const fetchMoreData = () => {
     if (articles.length < totalResults) {
