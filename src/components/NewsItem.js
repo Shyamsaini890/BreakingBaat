@@ -16,7 +16,8 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
       setProgress(10);
       const res = await fetch(
         // `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&pageSize=${articlesPerPage}&apiKey=${apiKey}`
-        `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&country=in&page=${page}&pageSize=${articlesPerPage}&apikey=${apiKey}` 
+        // `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&country=in&page=${page}&pageSize=${articlesPerPage}&apikey=${apiKey}` 
+        `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&country=in&page=${page}&pageSize=${articlesPerPage}&apikey=228c46b983e5bf62aaa7dd565a0b1783` 
       );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
