@@ -15,7 +15,8 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
     try {
       setProgress(10);
       const res = await fetch(
-        `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&pageSize=${articlesPerPage}&apiKey=${apiKey}`
+        // `https://newsapi.org/v2/top-headlines?country=in&category=${category}&page=${page}&pageSize=${articlesPerPage}&apiKey=${apiKey}`
+        `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&country=in&page=${page}&pageSize=${articlesPerPage}&apikey=${apiKey}` 
       );
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -106,7 +107,7 @@ const NewsItem = ({ category, apiKey, setProgress }) => {
                 </span>
                 <figure>
                   <img
-                    src={article.urlToImage || defaultImage}
+                    src={article.image || defaultImage}
                     alt={article.title}
                     className="w-full sm:h-[300px] h-auto"
                   />
